@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,intial-scale=1">
+        <title>AR Name Card</title>
+    </head>
+
+    <body style="margin:0px; overflow:hidden;">
+        <!-- Firebase -->
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+          
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+                apiKey: "xxx",
+                authDomain: "xxx",
+                projectId: "xxx",
+                storageBucket: "xxx",
+                messagingSenderId: "xxx",
+                appId: "xxx"
+            };
+          
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+        </script>
+        
+        <!-- 以下AR -->
+
+        <!-- 各種読み込み -->
+        <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
+        <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+        <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
+        <script src="shader-grid-glitch.js"></script>
+
+        <!-- ARシーン -->
+        <a-scene embedded arjs="debugUIEnabled:false;">
+
+            <!-- カーソル AR内のインタラクションになるUI -->
+            <a-camera>
+                <a-cursor fuse="true" color="white" scale="2 2">
+                    <a-animation 
+                        begin="mouseenter" 
+                        easing="ease-out" 
+                        attribute="scale" 
+                        fill="forwards" 
+                        from="2 2 2" 
+                        to="1 1 1" 
+                        dur="300">
+                    </a-animation>
+                    <a-animation 
+                        begin="mouseenter"
+                        attribute="color" 
+                        fill="forwards" 
+                        from="white" 
+                        to="red" 
+                        dur="0">
+                    </a-animation>
+                    <a-animation 
+                        begin="mouseleave" 
+                        easing="ease-in" 
+                        attribute="scale" 
+                        fill="forwards" 
+                        from="1 1 1" 
+                        to="2 2 2" 
+                        dur="300">
+                    </a-animation>
+                    <a-animation 
+                        begin="mouseleave" 
+                        attribute="color" 
+                        fill="forwards" 
+                        from="red" 
+                        to="black" 
+                        dur="0">
+                    </a-animation>
+                </a-cursor>
+            </a-camera>
+
+            <!-- AR内に表示させるもの -->
+            <a-assets>
+                <a-asset-item id="3DModel_tw" src="twitter.obj"></a-asset-item>
+                <a-asset-item id="Material_tw" src="twitter.mtl"></a-asset-item>
+
+                <a-asset-item id="3DModel_note" src="note.obj"></a-asset-item>
+                <a-asset-item id="Material_note" src="note.mtl"></a-asset-item>
+
+                <a-asset-item id="3DModel_fb" src="facebook.obj"></a-asset-item>
+                <a-asset-item id="Material_fb" src="facebook.mtl"></a-asset-item>
+
+                <a-asset-item id="3DModel_kirby" src="kirby.obj"></a-asset-item>
+                <a-asset-item id="Material_kirby" src="kirby.mtl"></a-asset-item>
+            </a-assets>
+
+            <!-- QRとマーカーを分けたパターン -->
+            <a-marker type='pattern' url='./marker/pattern-ar_namecard.patt'>
+                <a-entity>
+                    <a-obj-model 
+                        src="#3DModel_kirby"
+                        mtl="#Material_kirby"
+                        scale="0.5 0.5 0.5"
+                        position="0 0.5 0"
+                        rotation="-80 -90 90">
+                    </a-obj-model>
+                    <a-animation  
+                        attribute="position"
+                        dur="3000"
+                        to="0 0 0.5"
+                        repeat="indefinite"
+                        direction="alternate">
+                    </a-animation>
+                </a-entity>
+
+                <!-- テキスト -->
+                <a-text 
+                    position="-1.0 1.0 -2" 
+                    value="Hi, I'm Name!"
+                    width="5"
+                    color="#333"
+                    rotation="0 0 0">
+                </a-text>
+            </a-marker>
+
+            <!-- マーカーにQRを入れたパターン -->
+            <a-marker type='pattern' url='./marker/pattern-ar_namecard_qr.patt'>
+                <a-obj-model 
+                    src="#3DModel_tw"
+                    mtl="#Material_tw"
+                    scale="0.25 0.25 0.25"
+                    position="1 0.5 -1.75"
+                    rotation="0 0 0"
+                    link="href: https://twitter.com/dai_designing;">
+                </a-obj-model>
+                <a-obj-model 
+                    src="#3DModel_fb"
+                    mtl="#Material_fb"
+                    scale="0.25 0.25 0.25"
+                    position="1 0.5 -1.0"
+                    rotation="0 0 0"
+                    link="href: https://www.facebook.com/daisuke.mori.374;">
+                </a-obj-model>
+                <a-obj-model 
+                    src="#3DModel_note"
+                    mtl="#Material_note"
+                    scale="0.25 0.25 0.25"
+                    position="1 0.5 -0.25"
+                    rotation="0 0 0"
+                    link="href: https://note.com/daisuke_mori;">
+                </a-obj-model>
+            </a-marker>
+
+            <a-entity camera></a-entity>
+        </a-scene>    
+    </body>
+</html>
